@@ -1,7 +1,6 @@
 import React from 'react'
 import axios from 'axios';
-import SearchInput, {createFilter} from 'react-search-input'
-import {FormGroup, FormControl, Button, ControlLabel} from 'react-bootstrap';
+import {Form, FormGroup, Button, ControlLabel} from 'react-bootstrap';
 import Typeahead from 'react-bootstrap-typeahead';
 import DatePicker from "react-bootstrap-date-picker";
 
@@ -20,25 +19,34 @@ export default class SearchForm extends React.Component {
   }
 
   render() {
-    const style = {
-        color: "red"
+    const formGrouStyle = {
+        margin: "20px"
     };
 
     return (
-      <FormGroup>
-        <ControlLabel>Origin</ControlLabel>
-        <Typeahead
-          options={this.originData} onInputChange={this.originInputChanged.bind(this)} onChange={this.originUpdated.bind(this)}/>
-        <ControlLabel>Destination</ControlLabel>
+      <Form inline action="#">
+        <FormGroup style={formGrouStyle}>
+          <ControlLabel>Origin</ControlLabel>
           <Typeahead
-            options={this.destinationData}
-            onInputChange={this.destinationInputChanged.bind(this)} onChange={this.destinationUpdated.bind(this)} />
-          <ControlLabel>Date</ControlLabel>
-            <DatePicker value={this.state.date} onChange={this.dateUpdated.bind(this)}/>
-              <Button type="submit">
+            options={this.originData} onInputChange={this.originInputChanged.bind(this)} onChange={this.originUpdated.bind(this)}/>
+        </FormGroup>
+        <FormGroup style={formGrouStyle}>
+          <ControlLabel>Destination</ControlLabel>
+            <Typeahead
+              options={this.destinationData}
+              onInputChange={this.destinationInputChanged.bind(this)} onChange={this.destinationUpdated.bind(this)} />
+        </FormGroup>
+        <FormGroup style={formGrouStyle}>
+            <ControlLabel>Date</ControlLabel><br></br>
+              <DatePicker value={this.state.date} onChange={this.dateUpdated.bind(this)}/>
+        </FormGroup>
+        <FormGroup>
+          <br></br>
+          <Button type="submit" onClick={this.submitForm.bind(this)}>
             Submit
           </Button>
-      </FormGroup>
+        </FormGroup>
+      </Form>
     )
   }
 
@@ -76,6 +84,21 @@ export default class SearchForm extends React.Component {
         })
         this.forceUpdate()
     }).catch(function (error) {
+      // TODO: Add error handling
+      console.log(error);
+    });
+  }
+
+  submitForm () {
+    axios.post('http://localhost:8000/1/flights', {
+      'from': this.state.origin,
+      'to': this.state.destination,
+      'departure': this.state.date,
+      'facebookId': 123
+    }).then(res => {
+        this.props.onSearchFinished(res)
+    }).catch(function (error) {
+      // TODO: Add error handling
       console.log(error);
     });
   }

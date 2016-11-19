@@ -9,11 +9,13 @@ function flights(req, res) {
   req.checkBody('from', "Missing 'from'!").notEmpty();
   req.checkBody('to', "Missing 'to'!").notEmpty();
   req.checkBody('departure', "Missing 'to'!").notEmpty();
+  req.checkBody('facebookId', "Missing 'facebookId'!").notEmpty();
 
   var from = req.body.from;
   var to = req.body.to;
   var departure = req.body.departure;
-  console.log("Flights API valled with from=" + from + ", to=" + to + ", departure=" + departure);
+  var facebookId = req.body.facebookId;
+  console.log("Flights API called with from=" + from + ", to=" + to + ", departure=" + departure, "facebookId=" + facebookId);
 
   var errors = req.validationErrors();
   if (errors) {
@@ -27,7 +29,7 @@ function flights(req, res) {
 function airport_suggest(req, res) {
   req.checkBody('query', "Missing 'query'!").notEmpty();
   var query = req.body.query;
-  console.log("Airport suggest API valled with query=" + query);
+  console.log("Airport suggest API called with query=" + query);
 
   res.setHeader('Content-Type', 'application/json');
 
@@ -37,7 +39,6 @@ function airport_suggest(req, res) {
     return;
   }
 
-  // http://partners.api.skyscanner.net/apiservices/autosuggest/v1.0/UK/GBP/GB-EN/?query=london&apiKey=prtl6749387986743898559646983194&application=json
   var url = 'http://partners.api.skyscanner.net/apiservices/autosuggest/v1.0/UK/GBP/GB-EN/';
   var propertiesObject = {query: query,
                           apiKey: get_skyscanner_key(),

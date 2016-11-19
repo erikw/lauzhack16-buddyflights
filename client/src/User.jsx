@@ -1,7 +1,7 @@
 
 import React, {PropTypes, Component} from 'react';
 
-import {userStyle} from './User_styles.js';
+import styles from './User_styles.js';
 
 export default class User extends Component {
   static propTypes = {
@@ -12,7 +12,7 @@ export default class User extends Component {
 
   render() {
     return (
-       <div style={userStyle}>
+       <div style={styles.userStyle}>
           {this.props.text}
        </div>
     );
