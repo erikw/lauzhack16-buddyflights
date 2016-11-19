@@ -9,7 +9,6 @@ WORKDIR /app
 
 # Install dependencies
 RUN npm install
-RUN npm install webpack-dev-server
 
 # Expose the app port
 EXPOSE 8000
