@@ -14,11 +14,15 @@
     "express": "^4.14.0",
     "nodemon": "^1.11.0",
     "react": "^15.4.0",
-    "react-dom": "^15.4.0"
+    "react-dom": "^15.4.0",
+    "react-scripts": "latest"
   },
   "devDependencies": {
   },
   "scripts": {
-    "start": "nodemon src/App.js localhost 8000"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
   }
 }
