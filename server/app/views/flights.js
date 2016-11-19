@@ -14,8 +14,6 @@ function flights(req, res) {
   var departure = req.body.departure;
   console.log("Flights API valled with from=" + from + ", to=" + to + ", departure=" + departure);
 
-  // Allow cross origin
-  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Type', 'application/json');
 
   var errors = req.validationErrors();
@@ -32,8 +30,6 @@ function airport_suggest(req, res) {
   var query = req.body.query;
   console.log("Airport suggest API valled with query=" + query);
 
-  // Allow cross origin
-  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Type', 'application/json');
 
   var errors = req.validationErrors();

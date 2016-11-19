@@ -3,6 +3,7 @@ var util = require('util');
 var express = require('express');
 var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
+var cors  = require('cors');
 
 var viewHelloErik = require('./app/views/helloerik.js');
 var viewFlight = require('./app/views/flights.js');
@@ -16,6 +17,7 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(expressValidator());
+app.use(cors());
 
 // Routes
 app.get('/1/helloerik', viewHelloErik.helloErik);
