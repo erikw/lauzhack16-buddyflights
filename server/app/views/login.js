@@ -7,6 +7,9 @@ function createUser(req, res) {
   // parse request body
   var facebookId = req.body.facebookId;
   var city = req.body.city;
+  var firstName = req.body.firstName;
+  var lastName = req.body.lastName;
+  var profilePicture = req.body.profilePicture;
 
   // ensure uniqueness of facebookId
   var count = 0;
@@ -20,11 +23,18 @@ function createUser(req, res) {
       return;
     } else {
       // store the object in the DB
-      var newUser = models.User({id: uuid.v4(), facebookId: facebookId, city: city});
+      var newUser = models.User({
+        id: uuid.v4(),
+        facebookId: facebookId,
+        city: city,
+        firstName: firstName,
+        lastName: lastName,
+        profilePicture: profilePicture
+      });
       newUser.save(function (err) {
         if (err)
           helpers.handleError(req, res, err)
-        res.json({message: 'User created!'})
+        res.json({message: 'User created!', object: newUser})
       })
     }
   });
@@ -82,9 +92,10 @@ function handleFriendsInLocationOtherThanOrigin(facebookId) {
 function login(req, res) {
   // Validation
   req.checkBody('facebookId', 'Invalid facebookId, must not be empty!').notEmpty();
-  req.checkBody('city', 'Invalid City!').notEmpty();
-  req.checkBody('firstName', 'first name needs to be a string').isString();
-  req.checkBody('lastName', 'last name needs to be a string').isString();
+  req.checkBody('city', 'Invalid City!').notEmpty().isAlpha();
+  req.checkBody('firstName', 'first name needs to be a string').optional().isAlpha();
+  req.checkBody('lastName', 'last name needs to be a string').optional().isAlpha();
+  req.checkBody('profilePicture', 'Not valid URL').optional();
 
   // TODO do validation for list of facebookIds
   // req.checkBody('friends', 'This is not a friends list!')

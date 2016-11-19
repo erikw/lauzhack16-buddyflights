@@ -5,11 +5,12 @@ var mongoose     = require('mongoose');
 var Schema       = mongoose.Schema;
 
 var UserSchema   = new Schema({
-    id: String,
-    facebookId: String,
+    id: {type: String,  unique: true},
+    facebookId: {type: String,  unique: true},
     city: String,
     firstName: String,
-    lastName: String
+    lastName: String,
+    profilePicture: String
 });
 
 var RelationShipSchema = new Schema({
