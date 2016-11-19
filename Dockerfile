@@ -8,7 +8,7 @@ VOLUME /app
 WORKDIR /app
 
 # Install dependencies
-RUN npm install
+RUN npm install nodemon express react react-dom
 
 # Expose the app port
 EXPOSE 8000

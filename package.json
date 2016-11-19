@@ -2,7 +2,7 @@
   "name": "lauzhack16",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@bitbucket.org/erikw/lauzhack16.git"
@@ -13,12 +13,10 @@
   "dependencies": {
     "express": "^4.14.0",
     "nodemon": "^1.11.0",
-    "webpack": "latest"
+    "react": "^15.4.0",
+    "react-dom": "^15.4.0"
   },
   "devDependencies": {
-    "webpack": "^1.12.14",
-    "webpack-dev-middleware": "^1.6.1",
-    "webpack-hot-middleware": "^2.10.0"
   },
   "scripts": {
     "start": "nodemon ./server.js localhost 8000"
