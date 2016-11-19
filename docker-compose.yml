@@ -9,3 +9,17 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+    depends_on:
+      - mongo
+    networks:
+      - api
+
+  mongo:
+      ports:
+        - "27017:27017"
+      image: mongo:latest
+      networks:
+        - api
+
+networks:
+  api:
