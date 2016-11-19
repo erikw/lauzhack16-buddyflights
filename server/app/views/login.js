@@ -109,17 +109,6 @@ function login(req, res) {
   }
 }
 
-
-function profile(req, res) {
-  // Pull the user out of the DB
-  User.findById(req.params.facebookId, function (err, user) {
-    if (err)
-      helpers.handleError(req, res, err)
-
-    res.json(user);
-  })
-}
-
 // Export
 module.exports = {
   login: login,
