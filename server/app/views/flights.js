@@ -5,6 +5,10 @@ function get_skyscanner_key() {
 }
 
 function flights(req, res) {
+  req.checkBody('from', "Missing 'from'!").notEmpty();
+  req.checkBody('to', "Missing 'to'!").notEmpty();
+  req.checkBody('departure', "Missing 'to'!").notEmpty();
+
   var from = req.body.from;
   var to = req.body.to;
   var departure = req.body.departure;
@@ -14,25 +18,17 @@ function flights(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Type', 'application/json');
 
-  // TODO migrate to Daniels param verifieer
-  if (from == null) {
-    res.status(400).send(JSON.stringify({error: "'from' missing in request body."}, null, 3));
+  var errors = req.validationErrors();
+  if (errors) {
+    res.status(400).send(errors);
     return;
   }
-  if (to == null) {
-    res.status(400).send(JSON.stringify({error: "'to' missing in request body."}, null, 3));
-    return;
-  }
-  if (departure == null) {
-    res.status(400).send(JSON.stringify({error: "'departure' missing in request body."}, null, 3));
-    return;
-  }
-
 
   res.send(JSON.stringify({result: "Hello flight!"}, null, 3));
 }
 
 function airport_suggest(req, res) {
+  req.checkBody('query', "Missing 'query'!").notEmpty();
   var query = req.body.query;
   console.log("Airport suggest API valled with query=" + query);
 
@@ -40,11 +36,11 @@ function airport_suggest(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Type', 'application/json');
 
-  if (query == null) {
-    res.status(400).send(JSON.stringify({error: "'query' missing in request body."}, null, 3));
+  var errors = req.validationErrors();
+  if (errors) {
+    res.status(400).send(errors);
     return;
   }
-
 
 
   // http://partners.api.skyscanner.net/apiservices/autosuggest/v1.0/UK/GBP/GB-EN/?query=london&apiKey=prtl6749387986743898559646983194&application=json
