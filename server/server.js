@@ -15,5 +15,10 @@ app.use(bodyParser.json());
 app.get('/1/helloerik', viewHelloErik.helloErik);
 app.get('/1/flights', viewFlight.flights);
 
+// database setup
+var mongoose   = require('mongoose');
+mongoose.connect('mongodb://mongo:27017/lauzhack'); // connect to our database
+
+// run the server
 app.listen(8000);
 console.log('Server started on port ' + port);

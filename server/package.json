@@ -11,12 +11,12 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/erikw/lauzhack16",
   "dependencies": {
+    "body-parser": "latest",
     "express": "^4.14.0",
-    "nodemon": "^1.11.0",
-    "body-parser": "latest"
+    "mongoose": "^4.6.8",
+    "nodemon": "^1.11.0"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "scripts": {
     "start": "nodemon server.js"
   }
