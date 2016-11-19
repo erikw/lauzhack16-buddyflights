@@ -1,3 +1,9 @@
+var request = require('request');
+
+function get_skyscanner_key() {
+  return process.env.SKYSCANNER_API_KEY;
+}
+
 function flights(req, res) {
   var from = req.body.from;
   var to = req.body.to;
@@ -8,6 +14,7 @@ function flights(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Type', 'application/json');
 
+  // TODO migrate to Daniels param verifieer
   if (from == null) {
     res.status(400).send(JSON.stringify({error: "'from' missing in request body."}, null, 3));
     return;
@@ -39,7 +46,21 @@ function airport_suggest(req, res) {
   }
 
 
-  res.send(JSON.stringify({result: "Hello suggest!"}, null, 3));
+
+  // http://partners.api.skyscanner.net/apiservices/autosuggest/v1.0/UK/GBP/GB-EN/?query=london&apiKey=prtl6749387986743898559646983194&application=json
+  var url = 'http://partners.api.skyscanner.net/apiservices/autosuggest/v1.0/UK/GBP/GB-EN/';
+  var propertiesObject = {query: query,
+                          apiKey: get_skyscanner_key(),
+                          application: 'json'};
+
+  request.get({url:url, qs:propertiesObject}, function(err, response, body) {
+    if (err) {
+      res.status(400).send(JSON.stringify({error: "Got error message from SkyScanner:  " + err}, null, 3));
+      return;
+    }
+    console.log("Got from SkyScanner response code: " + response.statusCode);
+    res.send(body);
+  });
 }
 
 // Export
