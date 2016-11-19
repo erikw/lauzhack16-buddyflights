@@ -3,12 +3,14 @@ MAINTAINER Dubsmash
 
 # Prepare app directory
 RUN mkdir -p /app
-COPY . /app
-VOLUME /app
+
 WORKDIR /app
 
-# Install dependencies
-RUN npm install nodemon express react react-dom
+COPY package.json /app
+RUN npm install
+
+COPY . /app
+VOLUME /app
 
 # Expose the app port
 EXPOSE 8000

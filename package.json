@@ -19,6 +19,6 @@
   "devDependencies": {
   },
   "scripts": {
-    "start": "nodemon ./server.js localhost 8000"
+    "start": "nodemon src/App.js localhost 8000"
   }
 }
