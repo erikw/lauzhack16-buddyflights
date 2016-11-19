@@ -4,6 +4,7 @@
 var mongoose     = require('mongoose');
 var Schema       = mongoose.Schema;
 
+// TODO graph model to know who is friends with who
 var UserSchema   = new Schema({
     id: String,
     facebookId: String,
