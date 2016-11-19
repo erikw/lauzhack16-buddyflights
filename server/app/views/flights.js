@@ -1,4 +1,7 @@
 function flights(req, res) {
+  // Allow cross origin
+  res.set('Access-Control-Allow-Origin', '*');
+
   var from = req.body.from;
   var to = req.body.to;
   var departure = req.body.departure;
@@ -14,6 +17,7 @@ function flights(req, res) {
   }
 
   console.log("Flights API valled with from=" + from + ", to=" + to + ", departure=" + departure);
+
   res.json({result: "Hello flight!"});
 }
 
