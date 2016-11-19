@@ -30,13 +30,8 @@ function createUser(req, res) {
   });
 }
 
-function saveFriends(req, res) {
-  var friends = req.body.friends;
-  var fromId = req.body.facebookId;
-
-  console.log("adding %s friends", friends.length)
-
-  friends.forEach(function (toId) {
+function saveFriendsToDatabase(fromId, friendsArray){
+  friendsArray.forEach(function (toId) {
     var toId = toId
     var newRelationship = models.Relationship({fromId: fromId, toId: toId})
     newRelationship.save(function (err) {
@@ -45,6 +40,15 @@ function saveFriends(req, res) {
       console.log('Relationship created for %s with %s!', fromId, toId);
     })
   });
+}
+
+function addFriends(req, res) {
+  var friends = req.body.friends;
+  var fromId = req.body.facebookId;
+
+  console.log("adding %s friends", friends.length)
+  saveFriendsToDatabase(fromId, friends)
+
 }
 
 function friendsInLocationOtherThanOrigin(req, res) {
@@ -84,7 +88,7 @@ function login(req, res) {
     helpers.handleError(req, res, errors)
     return;
   } else {
-    createUser(req, res, saveFriends(req, res))
+    createUser(req, res, addFriends(req, res))
   }
 }
 

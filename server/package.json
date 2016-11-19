@@ -12,13 +12,15 @@
   "homepage": "https://bitbucket.org/erikw/lauzhack16",
   "dependencies": {
     "body-parser": "latest",
+    "chai": "^3.5.0",
+    "cors": "latest",
     "express": "^4.14.0",
     "express-validator": "^2.21.0",
     "mongoose": "^4.6.8",
     "node-uuid": "^1.4.7",
     "nodemon": "^1.11.0",
     "request": "latest",
-    "cors": "latest"
+    "sinon": "^1.17.6"
   },
   "devDependencies": {},
   "scripts": {
