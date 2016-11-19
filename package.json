@@ -12,6 +12,7 @@
   "homepage": "https://bitbucket.org/erikw/lauzhack16",
   "dependencies": {
     "express": "^4.14.0",
+    "nodemon": "^1.11.0",
     "webpack": "latest"
   },
   "devDependencies": {
@@ -20,6 +21,6 @@
     "webpack-hot-middleware": "^2.10.0"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "nodemon ./server.js localhost 8000"
   }
 }

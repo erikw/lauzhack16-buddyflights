@@ -1,18 +1,15 @@
 FROM node:7.1.0
-MAINTAINER tribou
+MAINTAINER Dubsmash
 
 # Prepare app directory
 RUN mkdir -p /app
+COPY . /app
 VOLUME /app
 WORKDIR /app
-COPY . /app
 
 # Install dependencies
 RUN npm install
 RUN npm install webpack-dev-server
-
-# Build the app
-RUN npm build
 
 # Expose the app port
 EXPOSE 8000
