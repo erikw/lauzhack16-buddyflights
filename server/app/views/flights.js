@@ -1,4 +1,5 @@
 var request = require('request');
+var helpers = require('../helpers');
 
 function get_skyscanner_key() {
   return process.env.SKYSCANNER_API_KEY;
@@ -14,13 +15,9 @@ function flights(req, res) {
   var departure = req.body.departure;
   console.log("Flights API valled with from=" + from + ", to=" + to + ", departure=" + departure);
 
-  // Allow cross origin
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Content-Type', 'application/json');
-
   var errors = req.validationErrors();
   if (errors) {
-    res.status(400).send(errors);
+    helpers.handleError(req,res)
     return;
   }
 
@@ -38,10 +35,9 @@ function airport_suggest(req, res) {
 
   var errors = req.validationErrors();
   if (errors) {
-    res.status(400).send(errors);
+    helpers.handleError(req,res)
     return;
   }
-
 
   // http://partners.api.skyscanner.net/apiservices/autosuggest/v1.0/UK/GBP/GB-EN/?query=london&apiKey=prtl6749387986743898559646983194&application=json
   var url = 'http://partners.api.skyscanner.net/apiservices/autosuggest/v1.0/UK/GBP/GB-EN/';

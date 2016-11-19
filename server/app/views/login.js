@@ -1,7 +1,9 @@
 var User = require('../models/user');
+var uuid = require('node-uuid');
+var helpers = require('../helpers');
+
 
 function login(req, res) {
-
   // Validation
   req.checkBody('facebookId', 'Invalid facebookId, must be numeric!').notEmpty();
   req.checkBody('city', 'Invalid City!').notEmpty();
@@ -12,12 +14,12 @@ function login(req, res) {
     return;
   } else {
 
-    // no validation errors let's continue
+    // parse request body
 
     var facebookId = req.body.facebookId;
     var city = req.body.city;
 
-    // ensure uniqueness
+    // ensure uniqueness of facebookId
     var count = 0;
     var query = User.find({facebookId: facebookId}).count();
 
@@ -26,15 +28,14 @@ function login(req, res) {
       count = result;
 
       if (count > 0) {
-        res.status(400);
-        res.send('User already existing!');
+        helpers.handleError(req,res, 'User already existing!')
         return;
       } else {
         // store the object in the DB
-        var newUser = User({facebookId: facebookId, city: city});
+        var newUser = User({id: uuid.v4(), facebookId: facebookId, city: city});
         newUser.save(function (err) {
           if (err)
-            re.send(err);
+            helpers.handleError(req,res, err)
           res.json({message: 'User created!'})
         })
       }

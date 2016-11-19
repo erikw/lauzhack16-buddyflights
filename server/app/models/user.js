@@ -8,8 +8,6 @@ var UserSchema   = new Schema({
     id: String,
     facebookId: String,
     city: String,
-    long: String,
-    lat: String,
 });
 
 module.exports = mongoose.model('User', UserSchema);
