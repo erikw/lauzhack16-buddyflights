@@ -44,7 +44,36 @@ function flights(req, res) {
       return;
     }
     console.log("Got from SkyScanner response code: " + response.statusCode);
-    res.send(body);
+    body = JSON.parse(body);
+
+    ret = {};
+
+    // TODO loop for each firend in DB
+    friendId = '0123456789';  // TODO mock use from DB
+    friendLocation = 'Berlin, Germany';  // TODO mock use from DB
+    friendFName = "Donald";  // TODO use db
+    friendLName = "Trump";  // TODO use db
+    profilePic = "http://implement-me.com/pic.png";  // TODO use db
+
+    if (body['Dates']['OutboundDates'].length > 0) {
+      var outdate = body['Dates']['OutboundDates'][0];
+
+      ret[friendId] = {};
+      ret[friendId]['friend'] = {firstName: friendFName, lastName: friendLName, profilePic: profilePic};
+
+      var toFriend = {}
+      toFriend['price'] = outdate['Price'];
+      toFriend['start'] = from;
+      toFriend['destination'] = friendLocation;
+      ret[friendId]['tripToFriend'] = toFriend
+
+
+      var toDestination = {}
+      ret[friendId]['tripToDestination'] = toDestination;
+      }
+
+    // TODO attach airport coordinates with tim's code
+    res.send(JSON.stringify(ret, null, 3));
   });
 }
 
