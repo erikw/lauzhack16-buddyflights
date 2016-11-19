@@ -7,6 +7,7 @@ function login(req, res) {
   // Validation
   req.checkBody('facebookId', 'Invalid facebookId, must be numeric!').notEmpty();
   req.checkBody('city', 'Invalid City!').notEmpty();
+  console.log("Login API called with facebookId=" + facebookId + ", city=" + city);
 
   var errors = req.validationErrors();
   if (errors) {
