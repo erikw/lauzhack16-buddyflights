@@ -112,6 +112,5 @@ function login(req, res) {
 // Export
 module.exports = {
   login: login,
-  profile: profile,
   saveFriendsToDatabase: saveFriendsToDatabase
 };
