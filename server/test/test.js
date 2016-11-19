@@ -5,7 +5,7 @@ var chai = require('chai');
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 var models = require('../app/models/user');
-var saveFriendsToDatabase = require('../app/views/login');
+var login = require('../app/views/login');
 
 // Let's start the test fun #ginpowered
 describe('loginTests', function () {
@@ -17,14 +17,14 @@ describe('loginTests', function () {
     var me = models.User({'facebookId': 1337, city: 'Berlin', firstName: 'Sarah', lastName: 'Unicorn'});
 
     var friends = [tim, erik];
-    saveFriendsToDatabase(me.facebookId, friends);
+    login.saveFriendsToDatabase(me.facebookId, friends);
   });
 
   it('test that the function returns all friends that live not ' +
     'at the origin of the caller', function () {
     //setup
-    me = User.find({facebookId: 1337}).exec(function () {
-      friends = handleFriendsInLocationOtherThanOriginme(me.facebookId);
+    me = models.User.find({facebookId: 1337}).exec(function () {
+      friends = login.handleFriendsInLocationOtherThanOriginme(me.facebookId);
       assert.isArray(friends)
       assert.oneOf(erik, friends, 'Not found in list');
       expect(friends.to.not.include(tim));

@@ -32,11 +32,11 @@ function createUser(req, res) {
 
 function saveFriendsToDatabase(fromId, friendsArray) {
   friendsArray.forEach(function (toId) {
-    var toId = toId
-    var newRelationship = models.Relationship({fromId: fromId, toId: toId})
+    var toId = toId;
+    var newRelationship = models.Relationship({fromId: fromId, toId: toId});
     newRelationship.save(function (err) {
       if (err)
-        helpers.handleError(req, res, err)
+        helpers.handleError(req, res, err);
       console.log('Relationship created for %s with %s!', fromId, toId);
     })
   });
