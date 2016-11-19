@@ -28,6 +28,6 @@ app.post('/1/airport_suggest', viewFlight.airport_suggest);
 var mongoose   = require('mongoose');
 mongoose.connect('mongodb://mongo:27017/test'); // connect to our database
 
-// run the server
+// Run the server
 app.listen(8000);
 console.log('Server started on port ' + port);
