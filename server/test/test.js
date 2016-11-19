@@ -5,7 +5,7 @@ var chai = require('chai');
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 var models = require('../app/models/user');
-var saveFriendsToDatabase = require('../app/views/login')
+var saveFriendsToDatabase = require('../app/views/login');
 
 // Let's start the test fun #ginpowered
 describe('loginTests', function () {
