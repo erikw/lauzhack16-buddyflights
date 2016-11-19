@@ -1,14 +1,19 @@
 // Imports
-var viewHelloErik = require('./app/views/helloerik.js');
-var express = require('express')
+var express = require('express');
 var bodyParser = require('body-parser');
+var viewHelloErik = require('./app/views/helloerik.js');
+var viewFlight = require('./app/views/flights.js');
 
-var app = express()
-// configure app to use bodyParser()
-// this will let us get the data from a POST
+// Config webserver
+var port = 8000;
+var app = express();
+// configure app to use bodyParser() this will let us get the data from a POST.
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.get('/1/helloerik', viewHelloErik.helloErik)
+// Routes
+app.get('/1/helloerik', viewHelloErik.helloErik);
+app.get('/1/flights', viewFlight.flights);
 
-app.listen(8000)
+app.listen(8000);
+console.log('Server started on port ' + port);
