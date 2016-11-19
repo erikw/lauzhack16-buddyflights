@@ -47,16 +47,41 @@ function saveFriends(req, res) {
   });
 }
 
+function friendsInLocationOtherThanOrigin(req, res) {
+  req.checkBody('facebookId', 'Invalid facebookId, must not be empty!').notEmpty();
+
+  var errors = req.validationErrors();
+  if (errors) {
+    helpers.handleError(req, res, errors);
+    return;
+  } else {
+    var facebookId = req.body.facebookId;
+    friends = Relationships.find({fromId: facebookId});
+
+    friends.forEach(function(friend){
+      friend = User.find({'facebookId': friend});
+      if (friend.city == facebookId){
+        var i = array.indexOf(friend);
+        friends.splice(i, 1)
+      }
+    });
+  return friends;
+  }
+}
+
 function login(req, res) {
   // Validation
   req.checkBody('facebookId', 'Invalid facebookId, must not be empty!').notEmpty();
   req.checkBody('city', 'Invalid City!').notEmpty();
+  req.checkBody('firstName', 'first name needs to be a string').isString();
+  req.checkBody('lastName', 'last name needs to be a string').isString();
+
   // TODO do validation for list of facebookIds
   // req.checkBody('friends', 'This is not a friends list!')
 
   var errors = req.validationErrors();
   if (errors) {
-    res.send(errors);
+    helpers.handleError(req, res, errors)
     return;
   } else {
     createUser(req, res, saveFriends(req, res))
@@ -68,7 +93,7 @@ function profile(req, res) {
   // Pull the user out of the DB
   User.findById(req.params.facebookId, function (err, user) {
     if (err)
-      res.send(err);
+      helpers.handleError(req, res, err)
 
     res.json(user);
   })

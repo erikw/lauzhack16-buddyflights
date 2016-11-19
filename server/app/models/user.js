@@ -8,6 +8,8 @@ var UserSchema   = new Schema({
     id: String,
     facebookId: String,
     city: String,
+    firstName: String,
+    lastName: String
 });
 
 var RelationShipSchema = new Schema({
@@ -15,10 +17,7 @@ var RelationShipSchema = new Schema({
   toId: String
 });
 
-// module.exports =
-// module.exports =
-
 module.exports = {
   User: mongoose.model('User', UserSchema),
   Relationship: mongoose.model('Relationship', RelationShipSchema)
-}
+};
