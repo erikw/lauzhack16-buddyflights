@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@bitbucket.org/erikw/lauzhack16.git"
@@ -13,16 +10,16 @@
   "author": "",
   "license": "ISC",
   "homepage": "https://bitbucket.org/erikw/lauzhack16",
-  "dependencies" : {
-    "webpack" : "latest",
-    "express": "latest"
+  "dependencies": {
+    "express": "^4.14.0",
+    "webpack": "latest"
   },
   "devDependencies": {
     "webpack": "^1.12.14",
     "webpack-dev-middleware": "^1.6.1",
     "webpack-hot-middleware": "^2.10.0"
   },
-   "scripts": {
-     "start": "webpack-dev-server --hot"
-    }
+  "scripts": {
+    "start": "node server.js"
+  }
 }

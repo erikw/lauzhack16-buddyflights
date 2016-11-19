@@ -2,11 +2,12 @@ FROM node:7.1.0
 MAINTAINER tribou
 
 # Prepare app directory
-RUN mkdir -p /usr/src/app
-ADD . /usr/src/app
+RUN mkdir -p /app
+VOLUME /app
+WORKDIR /app
+COPY . /app
 
 # Install dependencies
-WORKDIR /usr/src/app
 RUN npm install
 RUN npm install webpack-dev-server
 
