@@ -5,10 +5,11 @@ var mongoose     = require('mongoose');
 var Schema       = mongoose.Schema;
 
 var UserSchema   = new Schema({
+    id: String,
     facebookId: String,
-    long: Float32Array,
-    lat: Float32Array,
-    city: String
+    city: String,
+    long: String,
+    lat: String,
 });
 
 module.exports = mongoose.model('User', UserSchema);
