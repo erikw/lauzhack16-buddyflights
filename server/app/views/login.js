@@ -30,7 +30,7 @@ function createUser(req, res) {
   });
 }
 
-function saveFriendsToDatabase(fromId, friendsArray){
+function saveFriendsToDatabase(fromId, friendsArray) {
   friendsArray.forEach(function (toId) {
     var toId = toId
     var newRelationship = models.Relationship({fromId: fromId, toId: toId})
@@ -60,17 +60,23 @@ function friendsInLocationOtherThanOrigin(req, res) {
     return;
   } else {
     var facebookId = req.body.facebookId;
-    friends = Relationships.find({fromId: facebookId});
-
-    friends.forEach(function(friend){
-      friend = User.find({'facebookId': friend});
-      if (friend.city == facebookId){
-        var i = array.indexOf(friend);
-        friends.splice(i, 1)
-      }
-    });
-  return friends;
+    friends = handleFriendsInLocationOtherThanOrigin(facebookId);
   }
+  return friends;
+}
+
+function handleFriendsInLocationOtherThanOrigin(facebookId) {
+  // do the logic
+  friends = Relationships.find({fromId: facebookId});
+
+  friends.forEach(function (friend) {
+    friend = User.find({'facebookId': friend});
+    if (friend.city == facebookId) {
+      var i = array.indexOf(friend);
+      friends.splice(i, 1)
+    }
+  });
+  return friends;
 }
 
 function login(req, res) {
@@ -106,5 +112,6 @@ function profile(req, res) {
 // Export
 module.exports = {
   login: login,
-  profile: profile
+  profile: profile,
+  saveFriendsToDatabase: saveFriendsToDatabase
 };
