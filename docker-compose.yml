@@ -8,3 +8,15 @@ services:
     command: npm start
     volumes:
       - .:/app
+    networks:
+      - api
+
+  mongo:
+      ports:
+        - "27017:27017"
+      image: mongo:latest
+      networks:
+        - api
+
+networks:
+  api:
