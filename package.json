@@ -14,7 +14,8 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/erikw/lauzhack16",
   "dependencies" : {
-    "webpack" : "latest"
+    "webpack" : "latest",
+    "express": "latest"
   },
   "devDependencies": {
     "webpack": "^1.12.14",
@@ -25,4 +26,3 @@
      "start": "webpack-dev-server --hot"
     }
 }
-

@@ -8,6 +8,7 @@ ADD . /usr/src/app
 # Install dependencies
 WORKDIR /usr/src/app
 RUN npm install
+RUN npm install webpack-dev-server
 
 # Build the app
 RUN npm build
