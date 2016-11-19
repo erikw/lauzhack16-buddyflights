@@ -11,13 +11,22 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/erikw/lauzhack16",
   "dependencies": {
-    "express": "^4.14.0",
-    "nodemon": "^1.11.0",
+    "axios": "^0.15.2",
+    "bootstrap": "^3.3.7",
+    "css-loader": "^0.26.0",
+    "file-loader": "^0.9.0",
+    "google-map-react": "^0.21.3",
+    "less": "^2.7.1",
+    "less-loader": "^2.2.3",
     "react": "^15.4.0",
+    "react-addons": "^0.9.0",
+    "react-bootstrap": "^0.30.6",
+    "react-bootstrap-date-picker": "^3.7.0",
+    "react-bootstrap-typeahead": "^0.10.4",
     "react-dom": "^15.4.0",
-    "react-scripts": "latest"
-  },
-  "devDependencies": {
+    "react-scripts": "latest",
+    "react-search-input": "^0.10.3",
+    "style-loader": "^0.13.1"
   },
   "scripts": {
     "start": "react-scripts start",
