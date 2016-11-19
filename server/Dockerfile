@@ -13,7 +13,7 @@ COPY . /app
 VOLUME /app
 
 # Expose the app port
-EXPOSE 3000
+EXPOSE 8000
 
 # Start the app
 CMD npm start
