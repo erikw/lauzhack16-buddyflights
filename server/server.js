@@ -14,6 +14,7 @@ app.use(bodyParser.json());
 // Routes
 app.get('/1/helloerik', viewHelloErik.helloErik);
 app.post('/1/flights', viewFlight.flights);
+app.post('/1/airport_suggest', viewFlight.airport_suggest);
 
 // database setup
 var mongoose = require('mongoose');
