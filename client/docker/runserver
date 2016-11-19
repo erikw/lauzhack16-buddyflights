@@ -1,8 +1,4 @@
 #!/bin/bash
 if [ $? -eq 0 ]; then
-    if [ "$1" == "node" ]; then
-      docker-compose run --service-ports --rm web npm start-node
-    else
-      docker-compose run --service-ports --rm web npm start-react
-    fi
+    docker-compose run --service-ports --rm web
 fi
