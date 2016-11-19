@@ -13,10 +13,10 @@ app.use(bodyParser.json());
 
 // Routes
 app.get('/1/helloerik', viewHelloErik.helloErik);
-app.get('/1/flights', viewFlight.flights);
+app.post('/1/flights', viewFlight.flights);
 
 // database setup
-var mongoose   = require('mongoose');
+var mongoose = require('mongoose');
 mongoose.connect('mongodb://mongo:27017/lauzhack'); // connect to our database
 
 // run the server
