@@ -1,6 +1,4 @@
-function setHeaders(req, res){
-  // Allow cross origin
-  res.setHeader('Access-Control-Allow-Origin', '*');
+function setHeaders(res){
   res.setHeader('Content-Type', 'application/json');
 }
 
