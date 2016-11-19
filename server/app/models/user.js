@@ -4,11 +4,21 @@
 var mongoose     = require('mongoose');
 var Schema       = mongoose.Schema;
 
-// TODO graph model to know who is friends with who
 var UserSchema   = new Schema({
     id: String,
     facebookId: String,
     city: String,
 });
 
-module.exports = mongoose.model('User', UserSchema);
+var RelationShipSchema = new Schema({
+  fromId: String,
+  toId: String
+});
+
+// module.exports =
+// module.exports =
+
+module.exports = {
+  User: mongoose.model('User', UserSchema),
+  Relationship: mongoose.model('Relationship', RelationShipSchema)
+}
