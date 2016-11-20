@@ -31,7 +31,6 @@ function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
          if (error) {
            reject(error);
          } else {
-           console.log(friend);
           ret['friend'] = {first_name: friend.firstName, last_name: friend.lastName, profile_pic: friend.profilePicture};
           // TODO attach airport coordinates with tim's code
           ret['tripToFriend'] = {
