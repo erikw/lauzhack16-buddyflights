@@ -108,6 +108,8 @@ export default class SearchForm extends React.Component {
     axios.post('http://localhost:8000/1/flights', {
       'from': this.state.origin.CityId,
       'to': this.state.destination.CityId,
+      'from_human': this.state.origin.PlaceName,
+      'to_human': this.state.destination.PlaceName,
       'departure': dateFormat(this.state.date, format),
       'return': dateFormat(this.state.arrivalDate, format),
       'facebookId': "1"
