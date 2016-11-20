@@ -11,6 +11,7 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/erikw/lauzhack16",
   "dependencies": {
+    "axios": "^0.15.2",
     "body-parser": "latest",
     "chai": "^3.5.0",
     "cors": "latest",

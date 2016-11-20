@@ -1,11 +1,53 @@
 var request = require('request');
 var helpers = require('../helpers');
 var sprintf = require("sprintf-js").sprintf;
-
+var login = require('./login')
+var axios = require('axios');
+var models = require('../models/user');
 
 function get_skyscanner_key() {
   return process.env.SKYSCANNER_API_KEY;
 }
+
+function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
+  var market = 'UK';
+  var currency = 'EUR';
+  var locale = 'GB-EN';
+  // TODO make intermediate destination  be e.g. 25% of original vacation time
+  var url = sprintf('http://partners.api.skyscanner.net/apiservices/browsedates/v1.0/%s/%s/%s/%s/%s/%s/%s',
+    market, currency, locale, from, to, departure, returnd);
+
+  var params = {apiKey: get_skyscanner_key(), application: 'json'};
+
+  return axios.get(url, {params: params}).then(function (resp) {
+    if (resp.data.Dates.OutboundDates.length > 0) {
+      ret = {};
+      // Only check one for now..
+      var outdate = resp.data.Dates.OutboundDates[0];
+
+       return new Promise(function(resolve, reject) {
+         models.User.find({'facebookId': friendRel.toId}, function(error, friend) {
+         friend = friend[0];
+         if (error) {
+           reject(error);
+         } else {
+           console.log(friend);
+          ret['friend'] = {first_name: friend.firstName, last_name: friend.lastName, profile_pic: friend.profilePicture};
+          // TODO attach airport coordinates with tim's code
+          ret['tripToFriend'] = {
+                      price: outdate['Price'],
+                      start: {name: from, location: {longitud: 12345, latitude: 7890}},
+                      destination: {name: friend.city, location: {longitud: 12345, latitude: 7890}},
+                  };
+
+          ret['tripToDestination'] = {} // TODO
+          resolve(ret);
+         }
+         });
+       });
+  }});
+}
+
 
 function flights(req, res) {
   req.checkBody('from', "Missing 'from'!").notEmpty();
@@ -17,64 +59,31 @@ function flights(req, res) {
   var from = req.body.from;
   var to = req.body.to;
   var departure = req.body.departure;
-  var returnd = req.body.departure;
+  var returnd = req.body.return;
   var facebookId = req.body.facebookId;
   console.log("Flights API called with from=" + from + ", to=" + to + ", departure=" + departure + ", return=" +
-              returnd + ", facebookId=" + facebookId);
+    returnd + ", facebookId=" + facebookId);
 
   helpers.setHeaders(res)
   var errors = req.validationErrors();
   if (errors) {
-    helpers.handleError(req,res)
+    helpers.handleError(req, res)
     return;
   }
 
-  var market = 'UK';
-  var currency = 'EUR';
-  var locale = 'GB-EN';
-  // TODO make intermediate destination  be e.g. 25% of original vacation time
-  var url = sprintf('http://partners.api.skyscanner.net/apiservices/browsedates/v1.0/%s/%s/%s/%s/%s/%s/%s',
-                    market, currency, locale, from, to, departure, returnd);
-
-  var propertiesObject = {apiKey: get_skyscanner_key(), application: 'json'};
-
-  request.get({url:url, qs:propertiesObject}, function(err, response, body) {
-    if (err) {
-      res.status(response.statusCode).send(JSON.stringify({error: "Got error message from SkyScanner:  " + err}, null, 3));
-      return;
-    }
-    console.log("Got from SkyScanner response code: " + response.statusCode);
-    body = JSON.parse(body);
-
-    ret = {};
-
-    // TODO loop for each firend in DB
-    friendId = '0123456789';  // TODO mock use from DB
-    friendLocation = 'Berlin, Germany';  // TODO mock use from DB
-    friendFName = "Donald";  // TODO use db
-    friendLName = "Trump";  // TODO use db
-    profilePic = "http://implement-me.com/pic.png";  // TODO use db
-
-    if (body['Dates']['OutboundDates'].length > 0) {
-      var outdate = body['Dates']['OutboundDates'][0];
-
-      ret[friendId] = {};
-      ret[friendId]['friend'] = {firstName: friendFName, lastName: friendLName, profilePic: profilePic};
-
-      var toFriend = {}
-      toFriend['price'] = outdate['Price'];
-      toFriend['start'] = from;
-      toFriend['destination'] = friendLocation;
-      ret[friendId]['tripToFriend'] = toFriend
-
-
-      var toDestination = {}
-      ret[friendId]['tripToDestination'] = toDestination;
-      }
-
-    // TODO attach airport coordinates with tim's code
-    res.send(JSON.stringify(ret, null, 3));
+  login.handleFriendsInLocationOtherThanOrigin(facebookId, function(friends) {
+    console.log("%s friends to scan", friends.length);
+    var friendPromises = [];
+    friends.forEach(function (friend) {
+      friendPromises.push(skyscannerBrowseData(from, to, departure, returnd, friend));
+    });
+    Promise.all(friendPromises).then(values => {
+     res.send(JSON.stringify(values, null, 3));
+    }, function(error) {
+     res.status(500).send("Error getting friends fligights");
+    });
   });
+
 }
 
 function airport_suggest(req, res) {
@@ -87,16 +96,18 @@ function airport_suggest(req, res) {
   helpers.setHeaders(res)
   var errors = req.validationErrors();
   if (errors) {
-    helpers.handleError(req,res)
+    helpers.handleError(req, res)
     return;
   }
 
   var url = 'http://partners.api.skyscanner.net/apiservices/autosuggest/v1.0/UK/GBP/GB-EN/';
-  var propertiesObject = {query: query,
-                          apiKey: get_skyscanner_key(),
-                          application: 'json'};
+  var propertiesObject = {
+    query: query,
+    apiKey: get_skyscanner_key(),
+    application: 'json'
+  };
 
-  request.get({url:url, qs:propertiesObject}, function(err, response, body) {
+  request.get({url: url, qs: propertiesObject}, function (err, response, body) {
     if (err) {
       res.status(response.statusCode).send(JSON.stringify({error: "Got error message from SkyScanner:  " + err}, null, 3));
       return;

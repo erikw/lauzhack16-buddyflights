@@ -1,5 +1,4 @@
 var models = require('../models/user');
-
 var uuid = require('node-uuid');
 var helpers = require('../helpers');
 
@@ -75,18 +74,21 @@ function friendsInLocationOtherThanOrigin(req, res) {
   return friends;
 }
 
-function handleFriendsInLocationOtherThanOrigin(facebookId) {
+function handleFriendsInLocationOtherThanOrigin(facebookId, callback) {
   // do the logic
-  friends = Relationships.find({fromId: facebookId});
-
-  friends.forEach(function (friend) {
-    friend = User.find({'facebookId': friend});
-    if (friend.city == facebookId) {
-      var i = array.indexOf(friend);
-      friends.splice(i, 1)
-    }
+  models.User.find({'facebookId': facebookId}, function(err, user) {
+    origin = user.city;
+    models.Relationship.find({fromId: facebookId}, function(err, friends) {
+      friends.forEach(function (friend) {
+        friend = models.User.find({'facebookId': friend});
+        if (friend.city == facebookId) {
+          var i = friends.indexOf(friend);
+          friends.splice(i, 1);
+        }
+      });
+      callback(friends);
+    });
   });
-  return friends;
 }
 
 function login(req, res) {
@@ -112,5 +114,6 @@ function login(req, res) {
 // Export
 module.exports = {
   login: login,
-  saveFriendsToDatabase: saveFriendsToDatabase
+  saveFriendsToDatabase: saveFriendsToDatabase,
+  handleFriendsInLocationOtherThanOrigin: handleFriendsInLocationOtherThanOrigin
 };
