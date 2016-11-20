@@ -4,17 +4,21 @@ var sprintf = require("sprintf-js").sprintf;
 var login = require('./login')
 var axios = require('axios');
 var models = require('../models/user');
-
 var GoogleLocations = require('google-locations');
-var locations = new GoogleLocations('AIzaSyAnjR0Qo-gN2gSD5Ly3Si5RZAFt_YjL-zs');
 
 function get_skyscanner_key() {
   return process.env.SKYSCANNER_API_KEY;
 }
 
+function get_location_key() {
+  return process.env.GOOGLE_LOCATION_API_KEY;
+}
+
+
 function make_location_promise(result, tripKey, destKey) {
   return new Promise(function(resolve, reject) {
     var search = result['tripToFriend']['start']['location']['name'];
+    var locations = new GoogleLocations(get_location_key());
     locations.search({keyword: search}, function(err, response) {
       locations.details({placeid: response.results[0].place_id}, function(err, response) {
         loc = response.result.geometry.location;
