@@ -4,19 +4,26 @@ var sprintf = require("sprintf-js").sprintf;
 var login = require('./login')
 var axios = require('axios');
 var models = require('../models/user');
-
 var GoogleLocations = require('google-locations');
-var locations = new GoogleLocations('AIzaSyAnjR0Qo-gN2gSD5Ly3Si5RZAFt_YjL-zs');
 
 function get_skyscanner_key() {
   return process.env.SKYSCANNER_API_KEY;
 }
 
+function get_location_key() {
+  return process.env.GOOGLE_LOCATION_API_KEY;
+}
+
+
 function make_location_promise(result, tripKey, destKey) {
   return new Promise(function(resolve, reject) {
-    var search = result['tripToFriend']['start']['location']['name'];
-    locations.search({keyword: search}, function(err, response) {
-      locations.details({placeid: response.results[0].place_id}, function(err, response) {
+    var search = result[tripKey][destKey]['name'];
+    console.log("SearcH: " + search);
+    var locations = new GoogleLocations(get_location_key());
+    locations.autocomplete({input: search}, function(err, response) {
+      console.log(err);
+      console.log(response);
+      locations.details({placeid: response.predictions[0].place_id}, function(err, response) {
         loc = response.result.geometry.location;
         result[tripKey][destKey]['location']['longitude'] = loc.lng;
         result[tripKey][destKey]['location']['latitude'] = loc.lat;
@@ -26,13 +33,27 @@ function make_location_promise(result, tripKey, destKey) {
   });
 }
 
-function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
+function date2unix(date) {
+  return new Date(date).getTime() / 1000;
+}
+
+function get_friend_departure_date(departure, returnd) {
+  dep_s = date2unix(departure);
+  ret_s = date2unix(returnd);
+  diff_s = ret_s - dep_s;
+  diff_friend_s = Math.round(diff_s * 0.4);
+  friend_dep_s = dep_s + diff_friend_s;
+
+  return new Date(friend_dep_s * 1000).toISOString().slice(0,10);
+}
+
+function skyscannerBrowseData(from, from_human, to, to_human, departure, returnd, friendRel) {
   var market = 'UK';
   var currency = 'EUR';
   var locale = 'GB-EN';
-  var friendDeparture = '2016-12-17'  // TODO make intermediate destination  be e.g. 25% of original vacation time
+  var friendDeparture = get_friend_departure_date(departure, returnd);
   var url_base = sprintf('http://partners.api.skyscanner.net/apiservices/browsedates/v1.0/%s/%s/%s', market, currency, locale);
-  var url_toFriend = sprintf(url_base + "/%s/%s/%s/%s", from, to, departure, returnd);
+  var url_toFriend = sprintf(url_base + "/%s/%s/%s/%s", from, to, departure, friendDeparture);
   var params = {apiKey: get_skyscanner_key(), application: 'json'};
 
   return axios.get(url_toFriend, {params: params}).then(function(resp) {
@@ -55,8 +76,9 @@ function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
 
             ret['tripToFriend'] = {
               price: outdate['Price'],
-              start: {name: from, location: {}},
-              destination: {name: friend.city, location: {}},
+              departureDate: departure,
+              start: {name: from_human, location: {}},
+              destination: {name: friend.city, airport: friend.airport, location: {}},
             };
 
             resolve(ret);
@@ -67,7 +89,7 @@ function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
       }).then(function(result) {
         return make_location_promise(result, "tripToFriend", "destination");
       }).then(function(result) {
-        var url_toDest = sprintf(url_base + "/%s/%s/%s/%s", result.tripToFriend.destination.name, to, departure, returnd);
+        var url_toDest = sprintf(url_base + "/%s/%s/%s/%s", result.tripToFriend.destination.airport, to, friendDeparture, returnd);
         return axios.get(url_toDest, {params: params}).then(function(resp) {
           if (resp.data.Dates.OutboundDates.length > 0) {
             var ret = {};
@@ -75,8 +97,9 @@ function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
             var outdate = resp.data.Dates.OutboundDates[0];
             result['tripToDestination'] = {
               price: outdate['Price'],
-              start: {name: result.tripToFriend.destination.name, location: {}},
-              destination: {name: to, location: {}},
+              departureDate: friendDeparture,
+              start: {name: result.tripToFriend.destination.airport, location: {}},
+              destination: {name: to_human, location: {}},
             };
             return result;
           }
@@ -98,13 +121,17 @@ function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
 
 function flights(req, res) {
   req.checkBody('from', "Missing 'from'!").notEmpty();
+  req.checkBody('from_human', "Missing 'from_human'!").notEmpty();
   req.checkBody('to', "Missing 'to'!").notEmpty();
-  req.checkBody('departure', "Missing 'to'!").notEmpty();
+  req.checkBody('to_human', "Missing 'to_human'!").notEmpty();
+  req.checkBody('departure', "Missing 'departure'!").notEmpty();
   req.checkBody('return', "Missing 'return'!").notEmpty();
   req.checkBody('facebookId', "Missing 'facebookId'!").notEmpty();
 
   var from = req.body.from;
+  var from_human = req.body.from_human;
   var to = req.body.to;
+  var to_human = req.body.to_human;
   var departure = req.body.departure;
   var returnd = req.body.return;
   var facebookId = req.body.facebookId;
@@ -122,7 +149,7 @@ function flights(req, res) {
     console.log("%s friends to scan", friends.length);
     var friendPromises = [];
     friends.forEach(function (friend) {
-      friendPromises.push(skyscannerBrowseData(from, to, departure, returnd, friend));
+      friendPromises.push(skyscannerBrowseData(from, from_human, to, to_human, departure, returnd, friend));
     });
     Promise.all(friendPromises).then(values => {
      res.send(JSON.stringify(values, null, 3));

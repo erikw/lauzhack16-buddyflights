@@ -8,6 +8,7 @@ var UserSchema   = new Schema({
     id: {type: String,  unique: true},
     facebookId: {type: String,  unique: true},
     city: String,
+    airport: String,
     firstName: String,
     lastName: String,
     profilePicture: String
