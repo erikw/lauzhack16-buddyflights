@@ -6,6 +6,7 @@ function createUser(req, res) {
   // parse request body
   var facebookId = req.body.facebookId;
   var city = req.body.city;
+  var airport = req.body.airport;
   var firstName = req.body.firstName;
   var lastName = req.body.lastName;
   var profilePicture = req.body.profilePicture;
@@ -26,6 +27,7 @@ function createUser(req, res) {
         id: uuid.v4(),
         facebookId: facebookId,
         city: city,
+        airport: airport,
         firstName: firstName,
         lastName: lastName,
         profilePicture: profilePicture
@@ -120,6 +122,7 @@ function login(req, res) {
   // Validation
   req.checkBody('facebookId', 'Invalid facebookId, must not be empty!').notEmpty();
   req.checkBody('city', 'Invalid City!').notEmpty();
+  req.checkBody('airport', 'Invalid Airport!').notEmpty();
   req.checkBody('firstName', 'first name needs to be a string').optional().isAlpha();
   req.checkBody('lastName', 'last name needs to be a string').optional().isAlpha();
   req.checkBody('profilePicture', 'Not valid URL').optional();
