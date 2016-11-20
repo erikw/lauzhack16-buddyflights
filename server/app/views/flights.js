@@ -25,6 +25,9 @@ function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
 
       return new Promise(function(resolve, reject) {
         models.User.find({'facebookId': friendRel.toId}, function(error, friend) {
+          if (error) {
+            console.log(error);
+          }
           friend = friend[0];
           if (error) {
             reject(error);
@@ -37,8 +40,6 @@ function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
               start: {name: from, location: {longitud: 12345, latitude: 7890}},
               destination: {name: friend.city, location: {longitud: 12345, latitude: 7890}},
             };
-
-            //ret['tripToDestination'] = {} // TODO
 
             resolve(ret);
           }

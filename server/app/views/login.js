@@ -40,14 +40,32 @@ function createUser(req, res) {
 }
 
 function saveFriendsToDatabase(fromId, friendsArray) {
-  friendsArray.forEach(function (toId) {
-    var toId = toId;
-    var newRelationship = models.Relationship({fromId: fromId, toId: toId});
-    newRelationship.save(function (err) {
-      if (err)
-        helpers.handleError(req, res, err);
-      console.log('Relationship created for %s with %s!', fromId, toId);
-    })
+  console.log(fromId, friendsArray);
+  friendsArray.forEach(function (facebookId) {
+    var toId = facebookId;
+    models.Relationship.find({fromId: fromId, toId: toId}, function(err, relationships) {
+      if (relationships.length == 0){
+        var newRelationship = models.Relationship({fromId: fromId, toId: toId});
+        newRelationship.save(function (err) {
+          if (err) {
+            helpers.handleError(req, res, err);
+          }
+      });
+    }
+    console.log('Relationship created for %s with %s!', fromId, toId);
+    });
+
+    models.Relationship.find({fromId: toId, toId: fromId}, function(err, relationships) {
+      if (relationships.length == 0){
+        var newRelationship = models.Relationship({fromId: toId, toId: fromId});
+        newRelationship.save(function (err) {
+          if (err) {
+            helpers.handleError(req, res, err);
+          }
+      });
+    }
+    console.log('Relationship created for %s with %s!', toId, fromId);
+    });
   });
 }
 
@@ -69,22 +87,29 @@ function friendsInLocationOtherThanOrigin(req, res) {
     return;
   } else {
     var facebookId = req.body.facebookId;
-    friends = handleFriendsInLocationOtherThanOrigin(facebookId);
+    friends = handleFriendsInLocationOtherThanOrigin(facebookId, function(friends) {
+      return friends
+    });
   }
-  return friends;
 }
 
 function handleFriendsInLocationOtherThanOrigin(facebookId, callback) {
   // do the logic
   models.User.find({'facebookId': facebookId}, function(err, user) {
+    user = user[0];
     origin = user.city;
     models.Relationship.find({fromId: facebookId}, function(err, friends) {
       friends.forEach(function (friend) {
-        friend = models.User.find({'facebookId': friend});
-        if (friend.city == origin) {
-          var i = friends.indexOf(friend);
-          friends.splice(i, 1);
-        }
+        models.User.find({facebookId: friend.toId}, function(err, user){
+          if (err) {
+            console.log(err);
+          }
+          friend = user[0];
+          if (friend.city == origin) {
+            var i = friends.indexOf(friend);
+            friends.splice(i, 1);
+          }
+        });
       });
       callback(friends);
     });
