@@ -25,7 +25,7 @@ describe('loginTests', function () {
     //setup
     me = models.User.find({facebookId: 1337}).exec(function () {
       friends = login.handleFriendsInLocationOtherThanOriginme(me.facebookId);
-      assert.isArray(friends)
+      assert.isArray(friends);
       assert.oneOf(erik, friends, 'Not found in list');
       expect(friends.to.not.include(tim));
     })
