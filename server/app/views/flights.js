@@ -73,12 +73,17 @@ function skyscannerBrowseData(from, from_human, to, to_human, departure, returnd
             var ret = {};
             ret['friend'] = {first_name: friend.firstName, last_name: friend.lastName, profile_pic: friend.profilePicture};
 
+            var refurl = sprintf(
+                            "http://partners.api.skyscanner.net/apiservices/referral/v1.0/%s/%s/%s/%s/%s/%s/%s?apiKey=%s",
+                            market, currency, locale, from, friend.airport,
+                            outdate['PartialDate'], friendDeparture ,get_skyscanner_key());
 
             ret['tripToFriend'] = {
               price: outdate['Price'],
               departureDate: departure,
               start: {name: from_human, location: {}},
               destination: {name: friend.city, airport: friend.airport, location: {}},
+              refurl: refurl,
             };
 
             resolve(ret);
@@ -95,11 +100,18 @@ function skyscannerBrowseData(from, from_human, to, to_human, departure, returnd
             var ret = {};
             // Only check one for now..
             var outdate = resp.data.Dates.OutboundDates[0];
+
+            var refurl = sprintf(
+                            "http://partners.api.skyscanner.net/apiservices/referral/v1.0/%s/%s/%s/%s/%s/%s/%s?apiKey=%s",
+                            market, currency, locale, result.tripToFriend.destination.airport, to,
+                            friendDeparture, departure ,get_skyscanner_key());
+
             result['tripToDestination'] = {
               price: outdate['Price'],
               departureDate: friendDeparture,
               start: {name: result.tripToFriend.destination.airport, location: {}},
               destination: {name: to_human, location: {}},
+              refurl: refurl,
             };
             return result;
           }
