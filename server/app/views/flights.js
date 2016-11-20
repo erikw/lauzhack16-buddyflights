@@ -26,13 +26,27 @@ function make_location_promise(result, tripKey, destKey) {
   });
 }
 
+function date2unix(date) {
+  return new Date(date).getTime() / 1000;
+}
+
+function get_friend_departure_date(departure, returnd) {
+  dep_s = date2unix(departure);
+  ret_s = date2unix(returnd);
+  diff_s = ret_s - dep_s;
+  diff_friend_s = Math.round(diff_s * 0.4);
+  friend_dep_s = dep_s + diff_friend_s;
+
+  return new Date(friend_dep_s * 1000).toISOString().slice(0,10);
+}
+
 function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
   var market = 'UK';
   var currency = 'EUR';
   var locale = 'GB-EN';
-  var friendDeparture = '2016-12-17'  // TODO make intermediate destination  be e.g. 25% of original vacation time
+  var friendDeparture = get_friend_departure_date(departure, returnd);
   var url_base = sprintf('http://partners.api.skyscanner.net/apiservices/browsedates/v1.0/%s/%s/%s', market, currency, locale);
-  var url_toFriend = sprintf(url_base + "/%s/%s/%s/%s", from, to, departure, returnd);
+  var url_toFriend = sprintf(url_base + "/%s/%s/%s/%s", from, to, departure, friendDeparture);
   var params = {apiKey: get_skyscanner_key(), application: 'json'};
 
   return axios.get(url_toFriend, {params: params}).then(function(resp) {
@@ -55,6 +69,7 @@ function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
 
             ret['tripToFriend'] = {
               price: outdate['Price'],
+              departureDate: departure,
               start: {name: from, location: {}},
               destination: {name: friend.city, location: {}},
             };
@@ -67,7 +82,7 @@ function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
       }).then(function(result) {
         return make_location_promise(result, "tripToFriend", "destination");
       }).then(function(result) {
-        var url_toDest = sprintf(url_base + "/%s/%s/%s/%s", result.tripToFriend.destination.name, to, departure, returnd);
+        var url_toDest = sprintf(url_base + "/%s/%s/%s/%s", result.tripToFriend.destination.name, to, friendDeparture, returnd);
         return axios.get(url_toDest, {params: params}).then(function(resp) {
           if (resp.data.Dates.OutboundDates.length > 0) {
             var ret = {};
@@ -75,6 +90,7 @@ function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
             var outdate = resp.data.Dates.OutboundDates[0];
             result['tripToDestination'] = {
               price: outdate['Price'],
+              departureDate: friendDeparture,
               start: {name: result.tripToFriend.destination.name, location: {}},
               destination: {name: to, location: {}},
             };
