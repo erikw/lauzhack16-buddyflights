@@ -5,8 +5,25 @@ var login = require('./login')
 var axios = require('axios');
 var models = require('../models/user');
 
+var GoogleLocations = require('google-locations');
+var locations = new GoogleLocations('AIzaSyAnjR0Qo-gN2gSD5Ly3Si5RZAFt_YjL-zs');
+
 function get_skyscanner_key() {
   return process.env.SKYSCANNER_API_KEY;
+}
+
+function make_location_promise(result, tripKey, destKey) {
+  return new Promise(function(resolve, reject) {
+    var search = result['tripToFriend']['start']['location']['name'];
+    locations.search({keyword: search}, function(err, response) {
+      locations.details({placeid: response.results[0].place_id}, function(err, response) {
+        loc = response.result.geometry.location;
+        result[tripKey][destKey]['location']['longitude'] = loc.lng;
+        result[tripKey][destKey]['location']['latitude'] = loc.lat;
+        resolve(result);
+      });
+     });
+  });
 }
 
 function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
@@ -34,16 +51,23 @@ function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
           } else {
             var ret = {};
             ret['friend'] = {first_name: friend.firstName, last_name: friend.lastName, profile_pic: friend.profilePicture};
-            // TODO attach airport coordinates with tim's code
+
+
             ret['tripToFriend'] = {
               price: outdate['Price'],
-              start: {name: from, location: {longitud: 12345, latitude: 7890}},
-              destination: {name: friend.city, location: {longitud: 12345, latitude: 7890}},
+              //start: {name: from, location: {longitud: 12345, latitude: 7890}},
+              //destination: {name: friend.city, location: {longitud: 12345, latitude: 7890}},
+              start: {name: from, location: {}},
+              destination: {name: friend.city, location: {}},
             };
 
             resolve(ret);
           }
         });
+      }).then(function(result) {
+        return make_location_promise(result, "tripToFriend", "start");
+      }).then(function(result) {
+        return make_location_promise(result, "tripToFriend", "destination");
       }).then(function(result) {
         var url_toDest = sprintf(url_base + "/%s/%s/%s/%s", result.tripToFriend.destination.name, to, departure, returnd);
         return axios.get(url_toDest, {params: params}).then(function(resp) {
@@ -61,9 +85,14 @@ function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
         }).catch(function(error) {
           console.log(error);
         });
-      }).catch(function(error){
+      }).then(function(result) {
+        return make_location_promise(result, "tripToDestination", "start");
+      }).then(function(result) {
+        return make_location_promise(result, "tripToDestination", "destination");
+    }).catch(function(error) {
           console.log(error);
       });
+
     }
   });
 }
