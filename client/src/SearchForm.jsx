@@ -3,6 +3,7 @@ import axios from 'axios';
 import {Form, FormGroup, Button, ControlLabel} from 'react-bootstrap';
 import Typeahead from 'react-bootstrap-typeahead';
 import DatePicker from "react-bootstrap-date-picker";
+var dateFormat = require('dateformat');
 
 import './SearchForm.css';
 
@@ -12,7 +13,8 @@ export default class SearchForm extends React.Component {
     this.state = {
       origin: {},
       destination: {},
-      date: ''
+      date: '',
+      arrivalDate: ''
     }
     this.originData = []
     this.destinationData = []
@@ -37,8 +39,12 @@ export default class SearchForm extends React.Component {
               onInputChange={this.destinationInputChanged.bind(this)} onChange={this.destinationUpdated.bind(this)} />
         </FormGroup>
         <FormGroup style={formGrouStyle}>
-            <ControlLabel>Date</ControlLabel><br></br>
+            <ControlLabel>Departue Date</ControlLabel><br></br>
               <DatePicker value={this.state.date} onChange={this.dateUpdated.bind(this)}/>
+        </FormGroup>
+        <FormGroup style={formGrouStyle}>
+            <ControlLabel>Arrival date</ControlLabel><br></br>
+              <DatePicker value={this.state.arrivalDate} onChange={this.arrivalDateUpdated.bind(this)}/>
         </FormGroup>
         <FormGroup>
           <br></br>
@@ -59,6 +65,11 @@ export default class SearchForm extends React.Component {
     this.setState({date: input})
     console.log(this.state)
   }
+
+  arrivalDateUpdated (input) {
+    this.setState({arrivalDate: input})
+    console.log(this.state)
+ }
 
   originUpdated (input) {
     this.setState({origin: input[0].object})
@@ -90,11 +101,16 @@ export default class SearchForm extends React.Component {
   }
 
   submitForm () {
+    console.log(this.state)
+
+    var format = "yyyy-mm-dd"
+
     axios.post('http://localhost:8000/1/flights', {
-      'from': this.state.origin,
-      'to': this.state.destination,
-      'departure': this.state.date,
-      'facebookId': 123
+      'from': this.state.origin.CityId,
+      'to': this.state.destination.CityId,
+      'departure': dateFormat(this.state.date, format),
+      'return': dateFormat(this.state.arrivalDate, format),
+      'facebookId': "1"
     }).then(res => {
         this.props.onSearchFinished(res)
     }).catch(function (error) {

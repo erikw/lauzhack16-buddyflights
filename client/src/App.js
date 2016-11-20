@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {default as FaSpinner} from "react-icons/lib/fa/spinner";
+import axios from 'axios';
 
 import withScriptjs from "react-google-maps/lib/async/withScriptjs";
 
@@ -7,6 +8,7 @@ import './App.css';
 import _ from 'bootstrap/dist/css/bootstrap.css';
 import { withGoogleMap, GoogleMap, Marker, Polyline, InfoWindow } from "react-google-maps";
 import geolib from 'geolib';
+import {Col, Button} from 'react-bootstrap';
 
 import User from './User.jsx';
 import TripOverlayView from './TripOverlayView.jsx';
@@ -62,6 +64,8 @@ class App extends Component {
 
   constructor(props) {
     super(props)
+
+    this._createData()
     this.state = {
       1123: {
         isSelected: false,
@@ -208,12 +212,27 @@ class App extends Component {
   render() {
     var defaultCenter = this.calculateDefaultCenter()
     var overlayView = this.getOverlayView()
-    console.log(overlayView)
+
+    const facebookLoginStyle = {
+      width: "auto",
+      height: 30,
+      marginTop: -75,
+      color: "white",
+      border: 0,
+      backgroundColor: "#39579b"
+    }
+
+    const headerStyle = {
+      marginTop: -25
+    }
 
     return (
       <div className="App">
       <div className="App-header">
-        Buddyflights
+        <Col xs={6} style={headerStyle}><h2>Buddyflights</h2></Col>
+        <Col xs={6} xsOffset={6}>
+          <Button style={facebookLoginStyle}>Connect with Facebook</Button>
+        </Col>
       </div>
       <div className="SearchForm">
         <SearchForm onSearchFinished={this.onSearchFinished}/>
@@ -284,6 +303,44 @@ class App extends Component {
       </div>
       </div>
     );
+  }
+
+  _createData() {
+    axios.post("http://localhost:8000/1/login", {
+      facebookId: 1,
+      city: "CGN-sky",
+      friends: [2, 3, 4],
+      firstName: "Daniel",
+      lastName: "Taschik",
+      profilePicture: "https://scontent-fra3-1.xx.fbcdn.net/v/t1.0-1/c80.0.320.320/p320x320/943615_10151925738794762_1039440791_n.jpg"
+    })
+
+    axios.post("http://localhost:8000/1/login", {
+      facebookId: 2,
+      city: "STOC-sky",
+      friends: [1, 3, 4],
+      firstName: "Erik",
+      lastName: "Westrup",
+      profilePicture: "https://scontent-fra3-1.xx.fbcdn.net/v/t1.0-1/p320x320/14463069_10153869408475823_7971952732884700903_n.jpg"
+    })
+
+    axios.post("http://localhost:8000/1/login", {
+      facebookId: 3,
+      city: "AMS-sky",
+      friends: [2, 1, 4],
+      firstName: "Anne",
+      lastName: "Verheul",
+      profilePicture: "https://scontent-fra3-1.xx.fbcdn.net/v/t1.0-1/c0.53.320.320/p320x320/13626424_10208580716887832_143069116248888140_n.jpg"
+    })
+
+    axios.post("http://localhost:8000/1/login", {
+      facebookId: 4,
+      city: "BERL-sky",
+      friends: [2, 3, 1],
+      firstName: "Tim",
+      lastName: "Specht",
+      profilePicture: "https://scontent-fra3-1.xx.fbcdn.net/v/t1.0-1/c0.0.320.320/p320x320/10676326_10204902627596154_9111178845808767020_n.jpg"
+    })
   }
 
   onSearchFinished (data) {
