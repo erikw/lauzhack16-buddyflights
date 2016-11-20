@@ -76,16 +76,18 @@ function friendsInLocationOtherThanOrigin(req, res) {
 
 function handleFriendsInLocationOtherThanOrigin(facebookId, callback) {
   // do the logic
-  models.Relationship.find({fromId: facebookId}, function(err, friends) {
-    console.log(friends.length);
-    friends.forEach(function (friend) {
-      friend = models.User.find({'facebookId': friend});
-      if (friend.city == facebookId) {
-        var i = array.indexOf(friend);
-        friends.splice(i, 1)
-      }
+  models.User.find({'facebookId': facebookId}, function(err, user) {
+    origin = user.city;
+    models.Relationship.find({fromId: facebookId}, function(err, friends) {
+      friends.forEach(function (friend) {
+        friend = models.User.find({'facebookId': friend});
+        if (friend.city == facebookId) {
+          var i = friends.indexOf(friend);
+          friends.splice(i, 1);
+        }
+      });
+      callback(friends);
     });
-    callback(friends);
   });
 }
 
