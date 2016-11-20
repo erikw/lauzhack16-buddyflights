@@ -81,7 +81,7 @@ function handleFriendsInLocationOtherThanOrigin(facebookId, callback) {
     models.Relationship.find({fromId: facebookId}, function(err, friends) {
       friends.forEach(function (friend) {
         friend = models.User.find({'facebookId': friend});
-        if (friend.city == facebookId) {
+        if (friend.city == origin) {
           var i = friends.indexOf(friend);
           friends.splice(i, 1);
         }
@@ -94,7 +94,7 @@ function handleFriendsInLocationOtherThanOrigin(facebookId, callback) {
 function login(req, res) {
   // Validation
   req.checkBody('facebookId', 'Invalid facebookId, must not be empty!').notEmpty();
-  req.checkBody('city', 'Invalid City!').notEmpty().isAlpha();
+  req.checkBody('city', 'Invalid City!').notEmpty();
   req.checkBody('firstName', 'first name needs to be a string').optional().isAlpha();
   req.checkBody('lastName', 'last name needs to be a string').optional().isAlpha();
   req.checkBody('profilePicture', 'Not valid URL').optional();
