@@ -55,8 +55,6 @@ function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
 
             ret['tripToFriend'] = {
               price: outdate['Price'],
-              //start: {name: from, location: {longitud: 12345, latitude: 7890}},
-              //destination: {name: friend.city, location: {longitud: 12345, latitude: 7890}},
               start: {name: from, location: {}},
               destination: {name: friend.city, location: {}},
             };
@@ -77,8 +75,8 @@ function skyscannerBrowseData(from, to, departure, returnd, friendRel) {
             var outdate = resp.data.Dates.OutboundDates[0];
             result['tripToDestination'] = {
               price: outdate['Price'],
-              start: {name: result.tripToFriend.destination.name, location: {longitud: 12345, latitude: 7890}},
-              destination: {name: to, location: {longitud: 12345, latitude: 7890}},
+              start: {name: result.tripToFriend.destination.name, location: {}},
+              destination: {name: to, location: {}},
             };
             return result;
           }
