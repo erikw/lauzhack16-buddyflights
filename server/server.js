@@ -22,7 +22,6 @@ app.use(cors());
 // Routes
 app.get('/1/helloerik', viewHelloErik.helloErik);
 app.post('/1/login', viewLogin.login);
-app.get('/1/profile', viewLogin.profile);
 app.post('/1/flights', viewFlight.flights);
 app.post('/1/airport_suggest', viewFlight.airport_suggest);
 
