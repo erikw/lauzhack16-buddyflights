@@ -18,11 +18,12 @@ function get_location_key() {
 function make_location_promise(result, tripKey, destKey) {
   return new Promise(function(resolve, reject) {
     var search = result[tripKey][destKey]['name'];
-    console.log("SearcH: " + search);
+    console.log("Search: " + search);
     var locations = new GoogleLocations(get_location_key());
     locations.autocomplete({input: search}, function(err, response) {
-      console.log(err);
-      console.log(response);
+      if (err) {
+        console.log(err);
+      }
       locations.details({placeid: response.predictions[0].place_id}, function(err, response) {
         loc = response.result.geometry.location;
         result[tripKey][destKey]['location']['longitude'] = loc.lng;
