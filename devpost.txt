@@ -1,0 +1,43 @@
+
+Inspiration
+
+These days, many of us have friends all around the world. Traveling from city A to B is not uncommon. Since low-cost airlines offer affordable flights, why not stopping by a friend in city C and spend some time with her.
+What it does
+
+You can login with our service with your Facebook account. We store your friends list and match who of your friends is already on the platform. By entering your travel origin & destination as well as your travel dates, we will check, your friends and calculate the cheapest price fares for flights via your friends city to your destination. We will also show you, how much time you can spend with your friend.
+How we built it
+
+We build two node.js application. The fronted is build using React and communicates with the server via an API. The backend service is build using express.js. Flight information are being pulled in via the Skyscanner API.a
+Challenges we ran into
+
+Javascript, Javascript, Javascript
+
+Having not worked a lot with node.js, React and JS in general, we had a hart time fighting it ;)
+Accomplishments that we're proud of
+
+    We finally got the concepts of React and it now makes all sense.
+    Having this project in production, we would use the service ourselves.
+
+What we learned
+
+    node.js / express.js
+    React
+
+What's next for BuddyFlights
+
+Have a beer!
+Checkout the GIT
+
+https://bitbucket.org/taschik/flight-buddy-server/commits/027f6be4d68319ea80a01d8ce213bdd7821224fb https://bitbucket.org/taschik/flight-buddy-frontend/commits/c017e892dcbd0318f560820c8a517ba0bc1bc910
+Built With
+
+    react
+    node.js
+    express.js
+
+Try it out
+
+    flight-buddy-frontend.herokuapp.com
+
+
+
